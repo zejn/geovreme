@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta http-equiv="content-type" content="text/html; charset=utf-8">
+		<meta name="viewport" content="width=device-width; initial-scale=1.0; maximum-scale=5.0; user-scalable=1;" />
+		<title>Radarska slika padavin za brskalnike z geolokacijsko podporo</title>
+
+		<script language="javascript" type="text/javascript">
+			function getLocation() {
+				// Get location no more than 10 minutes old. 600000 ms = 10 minutes.
+				navigator.geolocation.getCurrentPosition(showLocation, showError, {enableHighAccuracy:true,maximumAge:600000});
+			}
+
+			function showError(error) {
+				// alert(error.code + ' ' + error.message);
+			}
+
+			function onLoad() {
+				var m;
+				if (document.location.hash) {
+					m = document.location.hash.match(/^#([\d\.]+);([\d\.]+)$/);
+					if (m) {
+						showLocation({coords: {latitude: parseFloat(m[1]), longitude: parseFloat(m[2])}});
+					}
+				} else {
+					if (!!navigator.geolocation) {
+						getLocation();
+					}
+				}
+			}
+
+			function toggleAnimacija() {
+				var geo = document.querySelector('#geoinfo'),
+					button = document.querySelector('#togglebtn');
+				if (geo.className === 'staticno') {
+					geo.className = 'animacija';
+					button.innerHTML = 'Statično';
+				} else {
+					geo.className = 'staticno';
+					button.innerHTML = 'Animacija';
+				}
+			}
+
+			function showLocation(position) {
+				var latitude = position.coords.latitude;
+				var longitude = position.coords.longitude;
+				document.location.hash = '#' + latitude + ';' + longitude;
+				//var latitude = 45.55; var longitude = 13.733333; // koper
+				var pos = new Array(14);
+				pos[0]  = [46.051389, 14.505556, 373, 349]; // Ljubljana
+				pos[1]  = [45.783333, 14.216667, 324, 415]; // Postojna
+				pos[2]  = [45.316667, 14.416667, 360, 513]; // Rijeka
+				pos[3]  = [45.550000, 13.733333, 250, 463]; // Koper
+				pos[4]  = [45.800000, 15.166667, 476, 409]; // Novo Mesto
+				pos[5]  = [46.274228, 13.952400, 286, 304]; // Bohinjska Bistrica
+				pos[6]  = [46.066667, 13.233333, 178, 347]; // Videm
+				pos[7]  = [46.616667, 14.300000, 342, 226]; // Celovec
+				pos[8]  = [46.235833, 15.267500, 486, 309]; // Celje
+				pos[9]  = [46.550000, 15.650000, 547, 246]; // Maribor
+				pos[10] = [46.666667, 16.166667, 625, 215]; // Murska Sobota
+				pos[11] = [45.816667, 15.983333, 595, 403]; // Zagreb
+				pos[12] = [47.070278, 15.438889, 533, 113]; // Gradec
+				pos[13] = [46.450000, 16.983333, 749, 246]; // Velika kaniža / Nagykanizsa
+				
+				var sorted_pos = new Array();
+				for (i=0; i<pos.length; i++) {
+					sorted_pos[i] = [Math.sqrt(Math.pow((latitude - pos[i][0]), 2) + Math.pow((longitude - pos[i][1]), 2)), i];
+				}
+				sorted_pos.sort();
+				
+				var a = sorted_pos[0][1];
+				var b = sorted_pos[1][1];
+
+				var dlon = (pos[b][1] - pos[a][1])/(pos[b][2] - pos[a][2]);
+				var dlat = (pos[b][0] - pos[a][0])/(pos[b][3] - pos[a][3]);
+				
+				var geoi = document.getElementById("geoinfo");
+				geoi.innerHTML='<div id="pika"></div>';
+				var pik = document.getElementById("pika");
+				// alert("lon: " + (349 + (latitude - 46.051389)/0.006471632978723405 - 4) + " and lat: " + (373 + (longitude - 14.505556)/0.0045026895161290308 - 4));
+				
+				var closest = pos[a];
+				pik.style.top = Math.round(closest[3] + (latitude - closest[0])/dlat) - 26 + "px";
+				pik.style.left = Math.round(closest[2] + (longitude - closest[1])/dlon) - 4 + "px";
+				document.getElementById("viewport").setAttribute('content','minimum-scale = 1, maximum-scale = 10, initial-scale = 3, user-scaleable = yes');
+				
+			}
+		</script>
+		<style>
+div#geoinfo {
+	/* background: url("http://www.arso.gov.si/vreme/napovedi in podatki/radar.gif") no-repeat; */
+	width: 819px;
+	height: 658px;
+	text-align: left;
+	float: left;
+}
+
+.staticno {
+	background: url("http://www.arso.gov.si/vreme/napovedi in podatki/radar.gif") no-repeat;
+}
+
+.animacija {
+	background: url("http://www.arso.gov.si/vreme/napovedi in podatki/radar_anim.gif") no-repeat;
+}
+
+div#pika {
+	background: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAB4AAAAeCAYAAAA7MK6iAAAAAXNSR0IArs4c6QAAAAZiS0dEAP8A/wD/oL2nkwAAAAlwSFlzAAALEwAACxMBAJqcGAAAAAd0SU1FB9kHCBcGJ2RItKAAAAAZdEVYdENvbW1lbnQAQ3JlYXRlZCB3aXRoIEdJTVBXgQ4XAAAC1ElEQVRIx+2WTWtbRxSGn7m6UqRAUsjHQiaJN104bmxTQhG0tBS0SiB/ILSkLoVkZ0EpyAYvBAEXumhxCw14EdU0BUEX8cJWvAgJlWyZoIXSVITYGEM//BU7jqFG1r0zc7KQ8KZOXMfXWfkdZnNh3mfmzplzDhzoDUntZfENfj3io682TJRozHCKy0/3FfwNwxdiRMcOEwWEMGE0Ps/ZKNeof9lH92+vWh96Heh3/PJFlEjuCDEJ46oQLg4KAaJE4g6q+0MuOncZuR/Yib8n904E949DRMTFVSD4GASLh4+DAhxqbOLhvfcVV8rb+Ti7BWv0D6AkhKMMBh+NRx0PjUMIhYOHRxhXXMJ3Xubj7D4anY9dHCVAjToevmgsGk2NmtTx8NE4OCqEOv4tt05v5+Pu/oYtBouhDoi14Hj4gBKDUZt4WKQ5LT5aBfSrDRqDwRIipJquYrHKR2ORxocmvI/P/wwE7GMmPHxpBJVWBisKpSy2eRVbQ6S5iUDABnNZY80GdTao4eErQaTxNrfsRGOUIJ8GBk4UTx8bOXXTXWYBg1DHF0CFcXG33rMsWOylXrp/DiyBnHjr5MKV1Cfcfn6Lf1b/kqO148ol0gw4i0V+6qX7o7uMTAeWMtPpdDWZTJ5dWlpSMzMzMj4+/mhqaqoL4GuyZ4BnaT77N9BcnU6nrycSib6VlRW1vLws+Xz+UbFY7NrX6jQwMPB+S0vLhNaa+fl5KZVK1bGxsY69VLb/lUCMMROxWIzZ2VnJ5/MPJycn391rPd4xqvv7+6c7OjpkcXFRCoXC4yCgO544k8n82NnZ+fbc3JzJ5XJPSqXSuaA6kJeCe3p6EvF4/Nr6+jrZbHa6UqkEBn0luL29fWp1dZXR0dGuSqXye9A917bgoaGhvwuFAmtra8lisRg4dFsNDg5mUqmUtLW1nd9Pzn9SZmtr671qtfpBuVx+cNCEH2gvegE+ukGkiTb9vgAAAABJRU5ErkJggg==') no-repeat;
+	width: 30px;
+	height: 30px;
+	position: relative;
+}
+div#texts {
+	float: left;
+	padding: 5px;
+}
+		</style>
+	</head>
+	<body onload="onLoad();">
+		<div id="geoinfo" class="staticno">&nbsp;</div>
+		<div id="texts">
+			<h3>Padavine na vaši lokaciji</h3>
+			<p>Radarska slika (c) <a href="http://www.arso.gov.si/">Agencije Republike Slovenije za Okolje</a>.</p>
+			<button type="button" id="togglebtn" onClick="toggleAnimacija();">Animacija</button>
+			<div id="dbg" style="display:none;">&nbsp;</div>
+		</div>
+	</body>
+</html>
