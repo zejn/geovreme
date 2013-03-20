@@ -2,7 +2,7 @@
 <html lang="en">
 	<head>
 		<meta http-equiv="content-type" content="text/html; charset=utf-8">
-		<meta name="viewport" content="width=device-width; initial-scale=1.0; maximum-scale=5.0; user-scalable=1;" />
+		<meta name="viewport" content="width=840px; initial-scale=1; maximum-scale=5.0; user-scalable=1;" />
 		<title>Radarska slika padavin za brskalnike z geolokacijsko podporo</title>
 
 		<script language="javascript" type="text/javascript">
@@ -85,7 +85,7 @@
 				var closest = pos[a];
 				pik.style.top = Math.round(closest[3] + (latitude - closest[0])/dlat) - 26 + "px";
 				pik.style.left = Math.round(closest[2] + (longitude - closest[1])/dlon) - 4 + "px";
-				document.getElementById("viewport").setAttribute('content','minimum-scale = 1, maximum-scale = 10, initial-scale = 3, user-scaleable = yes');
+				//document.getElementById("viewport").setAttribute('content','minimum-scale = 1, maximum-scale = 10, initial-scale = 3, user-scaleable = yes');
 				
 			}
 		</script>
@@ -116,6 +116,13 @@ div#texts {
 	float: left;
 	padding: 5px;
 }
+
+button {
+	height: 2em;
+	width: 6em;
+	font-size: 2em;
+}
+
 		</style>
 	</head>
 	<body onload="onLoad();">
